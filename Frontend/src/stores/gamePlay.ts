@@ -2,15 +2,14 @@ import { create } from 'zustand';
 import { Game } from '@/interfaces/game';
 import { Player } from '@/interfaces/player';
 import { useDeckStore } from './cardStore';
-import { use } from 'react';
 import { useLogStore } from './logStore';
-import { clearAllModuleContexts } from 'next/dist/server/lib/render-server';
+import {useGameStoryStore } from './storyStore';
 
 
 interface GameplayState {
   game: Game;
   
-  initializeGame: (stack: number, startFrom: number) => void; // if startFrom is not provided, it defaults to 0
+  initializeGame: (stack: number, startFrom: number) => void; 
   startDealing: (bigBlindNumber: number) => void;
   call: (playerIndex : number, amount : number) => void;
   raise : (playerIndex : number, amount : number) => void;
@@ -54,6 +53,7 @@ export const useGameplayStore = create<GameplayState>((set) => ({
     // Create an array of game.players.length players with the given stack
     const {initializeDeck} = useDeckStore.getState();
     const {addToLogs, clearLogs} = useLogStore.getState();
+    const {setBigBlind, setPlayerStacks} = useGameStoryStore.getState();
     initializeDeck();
     clearLogs();
     const players: Player[] = Array.from({ length: 6 }, (_, index) => ({
@@ -66,11 +66,13 @@ export const useGameplayStore = create<GameplayState>((set) => ({
       currentBet: 0,
     }));
 
+
+
     // Assign special roles to the first three players
     const dealer = startFrom % 6;
-    const smallBlind = (startFrom + 1) % 6;
-    const bigBlind = (startFrom + 2) % 6;
-    
+    const smallBlind = (startFrom ) % 6;
+    const bigBlind = (startFrom + 1) % 6;
+
 
     players[dealer].special = 'dealer';
     players[smallBlind ].special = 'smallblind';
@@ -85,16 +87,17 @@ export const useGameplayStore = create<GameplayState>((set) => ({
         currentTurn: 0, // Initialize current turn to 0
       },
     });
-
+    setBigBlind(40);
+    setPlayerStacks(players.map((player) => player.chips));
     const {startDealing} = useGameplayStore.getState()
     addToLogs(`Game Initialized with a stack of ${stack} chips`)
-
     startDealing(40);
   },
 
   startDealing : (bigBlindNumber = 40) => {
     const {  drawCard, initializeDeck } = useDeckStore.getState(); // Access deck state
     const { game,  } = useGameplayStore.getState(); // Access game state
+    const { addtoHands } = useGameStoryStore.getState();
     const {addToLogs} = useLogStore.getState();
     initializeDeck();
     const playersWithHands = game.players.map((player) => {
@@ -106,6 +109,13 @@ export const useGameplayStore = create<GameplayState>((set) => ({
         hand: [cardOne, cardTwo], 
       };
     });
+
+    for (let player of playersWithHands){
+      let cards = ""
+      cards += player.hand.map((card) => card.rank + card.suit);
+      addtoHands(cards);      
+    }
+
 
     let nextPlayer  = 0;
     const updatedPlayers = playersWithHands.map((player, index) => {
@@ -124,6 +134,7 @@ export const useGameplayStore = create<GameplayState>((set) => ({
       }
       return player;
     });
+    
     set({
       game: {
         ...game,
@@ -134,10 +145,12 @@ export const useGameplayStore = create<GameplayState>((set) => ({
         currentTurn: nextPlayer, // Start first round of the game
       },
     });
+    
   },
   allIn: (playerIndex: number) => {
     const { game } = useGameplayStore.getState();
     const {addToLogs} = useLogStore.getState();
+    const {addToAction} = useGameStoryStore.getState();
 
     const players = game.players;
 
@@ -153,7 +166,7 @@ export const useGameplayStore = create<GameplayState>((set) => ({
         currentTurn : (playerIndex + 1) % game.players.length,
         bet : allInAmount,
       }});
-
+    addToAction('allin')
     addToLogs(`Player ${player.id} goes all in with ${allInAmount} chips`);
 
   },
@@ -161,6 +174,7 @@ export const useGameplayStore = create<GameplayState>((set) => ({
   call : (playerIndex, amount) => {
     const { game,  } = useGameplayStore.getState(); // Access game state
     const {addToLogs} = useLogStore.getState();
+    const {addToAction} = useGameStoryStore.getState();
     const players = game.players;
     const player = players[playerIndex];
     const updatedPlayers = players.map((player, index) => {
@@ -180,11 +194,18 @@ export const useGameplayStore = create<GameplayState>((set) => ({
       },
     });
     addToLogs(`Player ${player.id} calls with ${amount} chips`);
+    if (amount === 0){
+      addToAction('x')
+    }
+    else {
+      addToAction('c')
+    }
   
   },
   raise : (playerIndex, amount)  => {
     const {game} = useGameplayStore.getState();
     const {addToLogs} = useLogStore.getState();
+    const {addToAction} = useGameStoryStore.getState();
     const players = game.players;
     const player = players[playerIndex];
     player.chips -= (amount - player.currentBet);
@@ -199,6 +220,7 @@ export const useGameplayStore = create<GameplayState>((set) => ({
       },
     });
     addToLogs(`Player ${player.id} raises to ${amount} chips`);
+    addToAction( `r${amount}`)
 
 
   }
@@ -207,6 +229,7 @@ export const useGameplayStore = create<GameplayState>((set) => ({
   fold: (playerIndex: number) => {
     const { game } = useGameplayStore.getState();
     const {addToLogs} = useLogStore.getState();
+    const {addToAction} = useGameStoryStore.getState();
     const foldingPlayer = game.players[playerIndex];
     let currentIndex = playerIndex;
     if (playerIndex + 1 === game.players.length) { // if its the last one
@@ -221,11 +244,13 @@ export const useGameplayStore = create<GameplayState>((set) => ({
       },
     });
     addToLogs(`Player ${foldingPlayer.id} folds`);
+    addToAction('f');
   },
 
   flop : () => {
     const { game } = useGameplayStore.getState();
-    const{addToLogs} = useLogStore.getState();  
+    const{addToLogs} = useLogStore.getState(); 
+    const {addToAction} = useGameStoryStore.getState();
     addToLogs("***FLOP***");
     const { drawCard } = useDeckStore.getState();
     const communityCards = [drawCard(), drawCard(), drawCard()];
@@ -233,6 +258,7 @@ export const useGameplayStore = create<GameplayState>((set) => ({
       useDeckStore.getState().addToCommunityCards(communityCards[i]);
       addToLogs( `Community Card ${communityCards[i].rank + communityCards[i].suit} is dealt`);
     }
+    addToAction('FLOP: ' + communityCards.map((card) => card.rank + card.suit).join(' '));
     const players = game.players.map((player) => {player.currentBet = 0; return player;});
     const nextPlayer = 0;
     set({
@@ -247,6 +273,7 @@ export const useGameplayStore = create<GameplayState>((set) => ({
 
 
   bet: (playerIndex: number, amount: number) =>{
+    const {addToAction} = useGameStoryStore.getState();
     const { game } = useGameplayStore.getState();
     const {addToLogs} = useLogStore.getState();
 
@@ -265,18 +292,21 @@ export const useGameplayStore = create<GameplayState>((set) => ({
       },
     });
     addToLogs(`Player ${player.id} bets with ${amount} chips`);
+    addToAction('b' + amount)
   }
 ,
   turn : () =>{
 
     const {game} = useGameplayStore.getState()
     const {addToLogs} = useLogStore.getState();  
+    const {addToAction} = useGameStoryStore.getState();
     addToLogs("***TURN***")
     const {drawCard, addToCommunityCards} = useDeckStore.getState()
     const fourthCard = drawCard()
     addToCommunityCards(fourthCard);
     addToLogs(`Community Card ${fourthCard.rank + fourthCard.suit} is dealt`);
     const players = game.players;
+    addToAction('TURN: ' + fourthCard.rank + fourthCard.suit);
     players.map((player) => {player.currentBet = 0 ;return player})
     set({
       game: {
@@ -291,12 +321,14 @@ export const useGameplayStore = create<GameplayState>((set) => ({
   river :() =>{
     const {game} = useGameplayStore.getState()
     const {addToLogs} = useLogStore.getState();
+    const {addToAction} = useGameStoryStore.getState();
     addToLogs("***RIVER***")
 
     const {drawCard, addToCommunityCards} = useDeckStore.getState()
     const fifthCard = drawCard()
     addToCommunityCards(fifthCard);
     addToLogs(`Community Card ${fifthCard.rank + fifthCard.suit} is dealt`);
+    addToAction('RIVER: ' + fifthCard.rank + fifthCard.suit);
 
     const players = game.players;
     players.map((player) => {player.currentBet = 0 ;return player})

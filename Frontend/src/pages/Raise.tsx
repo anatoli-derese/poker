@@ -12,8 +12,7 @@ const Raise = ({ game, onRaise }: { game: Game,  onRaise: (index: number, raiseA
             setRaise(raise+40);
         }
     }
-
-    
+   
     const decreaseRaise = ()=>{
         if (raise - game.bet > 0){
             setRaise(raise-40);

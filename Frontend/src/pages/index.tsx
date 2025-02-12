@@ -4,11 +4,12 @@ import CardComponent from "./CardComponent";
 import GameWindow from "./GameWindow";
 import StartGame from "./StartGame";
 import { LogsWindow } from "./LogsWindow";
+import { useGameStoryStore } from "@/stores/storyStore";
 
 export default function Home() {
   const {game,  flop,  turn, river, } = useGameplayStore()
   const {communityCards, } = useDeckStore()
-
+  const {hands, actions,big_blind, player_stacks } = useGameStoryStore()
   let roundEnded = false;
 
   if (game.players.length > 0 && game.players.length > game.currentTurn){
@@ -23,14 +24,35 @@ export default function Home() {
       }
       if (game.state === 'turn') {
         river();
+
       }
       if (game.state == 'river') {
         console.log("Showdown");
-        alert("Showdown");
-      }
-    }
-  }
-  
+
+        const gameObject = {
+          big_blind,
+          player_stacks,
+          hands,
+          actions
+        };
+        // Download the game log
+        const element = document.createElement("a");
+        const file = new Blob([JSON.stringify(gameObject)], { type: 'text/plain' });
+        element.href = URL.createObjectURL(file);
+        element.download = "game-log.json";
+      document.body.appendChild(element); // Required for this to work in  FireFox
+        element.click();
+
+    
+
+
+              }
+            }
+          }
+          
+        
+        
+ 
   if (roundEnded){
   }
 
@@ -44,8 +66,8 @@ export default function Home() {
           ))}
       </div>
       <div className="w-full flex flex-col gap-4 justify-center items-center">
-        <LogsWindow />
         <GameWindow />
+        <LogsWindow />
       </div>
     </div>
   );
