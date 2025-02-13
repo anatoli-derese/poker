@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 interface GameResultProps {
   result: number[];
   onClose: () => void;
+  stack : number;
 }
 
-const GameResult = ({ result, onClose }: GameResultProps) => {
+const GameResult = ({ result, onClose, stack  }: GameResultProps) => {
   if (!result) return null;
 
   return (
@@ -17,7 +18,7 @@ const GameResult = ({ result, onClose }: GameResultProps) => {
             <div key={index} className="flex justify-between">
               <span className="font-medium text-black">Player {index + 1}:</span>
               {
-                chips >= 1000 ? <span className="text-green-600 font-bold"> + {1000- chips} chips</span>: <span className="text-red-600 font-bold"> - {1000 -chips} chips</span>
+                chips >= stack ? <span className="text-green-600 font-bold"> + {stack- chips} chips</span>: <span className="text-red-600 font-bold"> - {1000 -chips} chips</span>
 
               }</div>
           ))}

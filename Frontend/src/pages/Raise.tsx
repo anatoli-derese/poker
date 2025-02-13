@@ -30,10 +30,10 @@ const Raise = ({ game, onRaise }: { game: Game,  onRaise: (index: number, raiseA
 
     return ( 
         <div>
-            <div className="flex flex-row gap-3 ${}">
-                <Button  onClick={increaseRaise} >+</Button>
-                <Button  onClick={raiseCallBack}>Raise: {raise}</Button>
-                <Button  onClick={decreaseRaise}>-</Button>
+            <div className="flex flex-row gap-3" data-testid="raise-controls">
+                <Button onClick={increaseRaise}>+</Button>
+                <Button onClick={raiseCallBack}>Raise: {raise}</Button>
+                <Button onClick={decreaseRaise}>-</Button>
             </div>
         </div>
         

@@ -14,7 +14,7 @@ export const LogsWindow: React.FC = () => {
     }
   
     return (
-        <div className=" w-90 h-64 bg-gray-800 rounded-lg shadow-lg overflow-hidden p-4 pointer-events-auto text-sm text-gray-300 font-mono">
+        <div className="logs w-90 h-64 bg-gray-800 rounded-lg shadow-lg overflow-hidden p-4 pointer-events-auto text-sm text-gray-300 font-mono">
           <div className="h-full overflow-y-auto">
             {logs.map((log, index) => (
               <div key={index} className="mb-2">
@@ -27,7 +27,7 @@ export const LogsWindow: React.FC = () => {
             <div ref={logEndRef} />
           </div>
         </div>
-      );
-  }
+    );
+}
   
   

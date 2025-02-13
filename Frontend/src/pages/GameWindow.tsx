@@ -32,6 +32,12 @@ const GameWindow = () => {
           player.hand.map((card, index) => <CardComponent key={index} card={card} />)}
       </div>
   
+      <div className="community-cards">
+        {game.communityCards.map((card, index) => (
+          <CardComponent key={index} card={card} data-testid={`community-card-${index}`} />
+        ))}
+      </div>
+  
       <div className="p-4 ">
         <ul className="flex flex-wrap gap-4 justify-center">
           {currentBet > 0 && (

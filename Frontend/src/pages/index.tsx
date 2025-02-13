@@ -99,6 +99,7 @@ export default function Home() {
           <GameResult 
             result={gameResult} 
             onClose={() => setGameResult(null)} 
+            stack={player_stacks[0]}
           />
         )}
 

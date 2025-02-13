@@ -32,10 +32,10 @@ const Bet = ({ game, onBet }: { game: Game,  onBet: (index: number, betAmount: n
 
     return ( 
         <div>
-            <div className="flex flex-row gap-3 ${}">
-                <Button  onClick={increaseBet} >+</Button>
-                <Button  onClick={BetCallBack}>Bet: {Bet}</Button>
-                <Button  onClick={decreaseBet}>-</Button>
+            <div className="flex flex-row gap-3" data-testid="bet-controls">
+                <Button onClick={increaseBet}>+</Button>
+                <Button onClick={BetCallBack}>Bet: {Bet}</Button>
+                <Button onClick={decreaseBet}>-</Button>
             </div>
         </div>
         
