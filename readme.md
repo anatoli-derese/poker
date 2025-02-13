@@ -126,7 +126,7 @@ The PostgreSQL database uses a single table `game_story` with the following stru
 2. **State Management**: Zustand is used for predictable state updates.  
 3. **Type Safety**: TypeScript ensures type safety and improves developer experience.  
 4. **RESTful API**: The backend API follows REST principles for consistency and scalability.  
-5. **Testing**: Comprehensive test coverage using Jest, Playwright, and pytest.  
+5. **Testing**: Comprehensive test coverage using Jest and Playwright.  
 
 ### Folder Structure
 ```
