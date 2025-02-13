@@ -1,3 +1,5 @@
+const API_ENDPOINT = 'http://127.0.0.1:8000';
+
 interface GameData {
   big_blind: number;
   player_stacks: number[];
@@ -25,13 +27,14 @@ interface GamesResponse {
 
 export const saveGame = async (gameData: GameData): Promise<GameResponse> => {
   try {
-    const response = await fetch('http://127.0.0.1:8000/save-game', {
+    const response = await fetch(`${API_ENDPOINT}/save-game`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(gameData),
     });
 
     const data = await response.json();
+    console.log(data)
 
     if (!response.ok || data["status_code"] !== 200) {
       return { message: '', id: '', result: [], error: data["detail"] || 'Unexpected error' };
@@ -47,7 +50,7 @@ export const saveGame = async (gameData: GameData): Promise<GameResponse> => {
 
 export const fetchSavedGames = async (): Promise<GamesResponse> => {
   try {
-    const response = await fetch('http://127.0.0.1:8000/get-games', {
+    const response = await fetch(`${API_ENDPOINT}/get-games`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });
