@@ -4,8 +4,16 @@ from Database import get_db_connection
 from Repository import GameRepository
 from Model import GameStory
 from calculate_hand import simulateGamePlay
-
+from fastapi.middleware.cors import CORSMiddleware
+    
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 async def get_repo():
     db = await get_db_connection()
@@ -16,7 +24,10 @@ async def get_repo():
 
 @app.post("/save-game/")
 async def save_game(game: GameStory, repo: GameRepository = Depends(get_repo)):
-    result = simulateGamePlay(game)
+    try:
+        result = simulateGamePlay(game)
+    except Exception as e:
+        return HTTPException(status_code=401, detail=str(e))
     game_id = await repo.save_game(game, result)
     return {"message": "Game saved", "id": game_id, "result" : result}
 

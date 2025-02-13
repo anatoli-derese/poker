@@ -23,7 +23,7 @@ export const useGameStoryStore = create<GameStory>((set) => ({
         set((state) => ({
           big_blind: big_blind, 
     })),
-
+    
     setPlayerStacks: (player_stacks: number[]) =>
         set((state) => ({
           player_stacks: player_stacks, 
