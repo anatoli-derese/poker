@@ -126,40 +126,45 @@ The PostgreSQL database uses a single table `game_story` with the following stru
 2. **State Management**: Zustand is used for predictable state updates.  
 3. **Type Safety**: TypeScript ensures type safety and improves developer experience.  
 4. **RESTful API**: The backend API follows REST principles for consistency and scalability.  
-5. **Testing**: Comprehensive test coverage using Jest, Playwright, and pytest.  
+5. **Testing**: Comprehensive test coverage using Jest and Playwright.  
 
 ### Folder Structure
 ```
 .
 ├── Backend
-│   ├── Dockerfile
-│   ├── poetry.lock
-│   ├── __pycache__
-│   ├── pyproject.toml
-│   └── src
+│   ├── Dockerfile
+│   ├── pyproject.toml
+│   ├── poetry.lock
+│   ├── src
+│   │   ├── api/routes.py
+│   │   ├── core/config.py
+│   │   ├── db/database.py
+│   │   ├── main.py
+│   │   ├── models/game.py
+│   │   ├── repositories/game_repository.py
+│   │   ├── services/game_service.py
 ├── docker-compose.yml
 ├── Frontend
-│   ├── components.json
-│   ├── Dockerfile
-│   ├── e2e
-│   ├── eslint.config.mjs
-│   ├── jest.config.js
-│   ├── jest.setup.js
-│   ├── next.config.ts
-│   ├── next-env.d.ts
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── playwright.config.ts
-│   ├── playwright-report
-│   ├── postcss.config.mjs
-│   ├── public
-│   ├── README.md
-│   ├── src
-│   ├── tailwind.config.ts
-│   ├── test-results
-│   ├── tests
-│   └── tsconfig.json
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── src
+│   │   ├── api/endpoints.ts
+│   │   ├── components
+│   │   │   ├── GameResult.tsx
+│   │   │   ├── SavedGames.tsx
+│   │   │   └── ui/button.tsx
+│   │   ├── interfaces/game.ts
+│   │   ├── pages
+│   │   │   ├── index.tsx
+│   │   │   ├── GameWindow.tsx
+│   │   │   ├── StartGame.tsx
+│   │   ├── services/gameService.ts
+│   │   ├── stores/gamePlay.ts
+│   │   ├── styles/globals.css
+│   ├── tailwind.config.ts
+│   ├── tsconfig.json
 └── readme.md
+
 ```
 
 ---
