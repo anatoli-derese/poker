@@ -5,7 +5,7 @@ import GameWindow from "./GameWindow";
 import StartGame from "./StartGame";
 import { LogsWindow } from "./LogsWindow";
 import { useGameStoryStore } from "@/stores/storyStore";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Key } from 'react';
 import { saveGame } from '@/services/gameService';
 import GameResult from '@/components/GameResult';
 import ErrorModal from '@/components/ErrorModal';
@@ -22,7 +22,7 @@ export default function Home() {
   // Handle round transitions
   useEffect(() => {
     const allPlayersBetEqual = game.players.every(
-      player => player.currentBet === game.bet
+      (      player: { currentBet: any; }) => player.currentBet === game.bet
     );
     console.log("All players bet equal:", allPlayersBetEqual);
 
@@ -40,7 +40,7 @@ export default function Home() {
 
   // Handle game completion separately
   useEffect(() => {
-    const allPlayersBetEqual = game.players.every(player => 
+    const allPlayersBetEqual = game.players.every((player: { currentBet: any; }) => 
       player.currentBet === game.bet
     );
     
@@ -86,7 +86,7 @@ export default function Home() {
         <StartGame />
         <div className="flex flex-row gap-2 justify-center">
           {communityCards.length > 0 &&
-            communityCards.map((card, index) => (
+            communityCards.map((card: { suit: string; rank: string; }, index: Key | null | undefined) => (
               <CardComponent key={index} card={card} />
             ))}
         </div>
