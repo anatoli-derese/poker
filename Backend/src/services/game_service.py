@@ -1,5 +1,5 @@
-from models.game import GameStory
-from pokerkit import Automation, Mode, NoLimitTexasHoldem
+from src.models.game import GameStory
+from pokerkit import Automation, NoLimitTexasHoldem,Mode
 
 class GameService:
     @staticmethod

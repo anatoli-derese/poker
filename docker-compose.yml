@@ -1,0 +1,42 @@
+
+services:
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    volumes:
+      - ./Frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    command: npm run dev
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://anatoli:abc123@db:5433/my_db
+    depends_on:
+      - db
+    # command: uvicorn src.main:app --host 0.0.0.0 --port 8000
+
+  db:
+    image: postgres:15
+    ports:
+      - "5433:5433"
+    environment:
+      - POSTGRES_USER=anatoli
+      - POSTGRES_PASSWORD=abc123
+      - POSTGRES_DB=my_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data: 

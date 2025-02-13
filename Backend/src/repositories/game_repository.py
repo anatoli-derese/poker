@@ -1,7 +1,7 @@
 import uuid
 import asyncpg
-from repositories.base import BaseRepository
-from models.game import GameStory, GameStoryResult
+from src.repositories.base import BaseRepository
+from src.models.game import GameStory, GameStoryResult
 
 class GameRepository(BaseRepository):
     async def create_table(self):

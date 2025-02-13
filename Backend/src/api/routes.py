@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
-from repositories.game_repository import GameRepository
-from services.game_service import GameService
-from models.game import GameStory
-from db.database import get_db_connection
+from src.repositories.game_repository import GameRepository
+from src.services.game_service import GameService
+from src.models.game import GameStory
+from src.db.database import get_db_connection
 
 router = APIRouter()
 

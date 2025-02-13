@@ -1,5 +1,12 @@
-import asyncpg
-from core.config import settings
+from asyncpg import create_pool
+from asyncpg.pool import Pool
+from src.core.config import settings
 
-async def get_db_connection():
-    return await asyncpg.connect(settings.DATABASE_URL) 
+async def get_db_connection() -> Pool:
+    return await create_pool(
+        user='anatoli',
+        password='abc123',
+        database='my_db',
+        host='db',
+        port=5432
+    ) 
